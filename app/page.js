@@ -1,7 +1,7 @@
-import { FadeIn } from "@/components/FadeIn";
-import Recentblogs from "@/components/blogs/Recentblogs";
-import Subscription from "@/components/blogs/Subscription";
-import Tags from "@/components/blogs/Tags";
+import { FadeIn } from "../components/FadeIn";
+import Recentblogs from "../components/blogs/Recentblogs";
+import Subscription from "../components/blogs/Subscription";
+import Tags from "../components/blogs/Tags";
 import Image from "next/image";
 
 export default function Home() {
