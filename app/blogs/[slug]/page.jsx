@@ -11,7 +11,6 @@ export default function BlogDetailsPage() {
   const slug = params?.slug;
   const blogsDetails = useBlogsDetails(slug);
 
-  console.log(blogsDetails);
   return (
     <div className=" max-w-3xl text-gray-900  mx-auto ">
       <section className=" w-full flex flex-col gap-4">

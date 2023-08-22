@@ -27,6 +27,12 @@
     }
 }
 
-link,a{
-   text-decoration: underline;
+.customeBlock{
+    link,a{
+        text-decoration: underline;
+     }
+}   
+
+#blogCards{
+    text-decoration: none !important;
 }

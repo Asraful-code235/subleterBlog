@@ -1,22 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { client } from "../../sanity/lib/client";
 
-const useGetAllBlogs = (count) => {
+const useGetAllCategories = () => {
   const {
-    data: blogs,
+    data: categories,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["/blogs"],
+    queryKey: ["/categories"],
     queryFn: async () => {
       const query = `
-        *[_type == "post" ]  | order(publishedAt desc)[0..${count - 1}] {
+        *[_type == "category" ]  | order(publishedAt desc) {
           ...,
-          author->{name,image,...},
-          categories[]->{
-            title,
-            ref
-          }
+         title
         }
      
 
@@ -28,7 +24,7 @@ const useGetAllBlogs = (count) => {
     keepPreviousData: true,
   });
 
-  return blogs;
+  return categories;
 };
 
-export default useGetAllBlogs;
+export default useGetAllCategories;

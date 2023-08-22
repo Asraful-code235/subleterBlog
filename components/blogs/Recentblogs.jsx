@@ -5,12 +5,20 @@ import { urlForImage } from "../../sanity/lib/image";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useGetAllBlogs from "../hooks/useGetAllBlogs";
+import { useState } from "react";
 
 export default function Recentblogs() {
   // if (blogs?.isLoading) return "Loading...";
   // if (blogs?.isError) return "Something went wrong";
 
-  const blogs = useGetAllBlogs();
+  const initialCount = 9; // Initial number of blogs to display
+  const [displayCount, setDisplayCount] = useState(initialCount); // State to track displayed blogs count
+
+  const blogs = useGetAllBlogs(displayCount); // Pass the displayCount to your useGetAllBlogs hook
+
+  const handleShowMore = () => {
+    setDisplayCount(displayCount + 9); // Increase displayCount by 9 on "Show More" click
+  };
 
   return (
     <section className="bg-white text-gray-600 w-full">
@@ -19,7 +27,10 @@ export default function Recentblogs() {
         <span className="text-[#02ae70]">Recent</span> Blogs
       </h1>
       <FadeIn>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 transition-all duration-500 ">
+        <ul
+          id="blogCards"
+          className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 transition-all duration-500 "
+        >
           {blogs?.map((blog, key) => (
             <Link
               href={`/blogs/${blog?.slug?.current}`}
@@ -50,6 +61,17 @@ export default function Recentblogs() {
             </Link>
           ))}
         </ul>
+        {blogs &&
+          blogs.length > displayCount && ( // Show "Show More" button if there are more blogs to show
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handleShowMore}
+                className="bg-[#02ae70] text-white px-4 py-2 rounded-full text-sm"
+              >
+                Show More
+              </button>
+            </div>
+          )}
       </FadeIn>
     </section>
   );
