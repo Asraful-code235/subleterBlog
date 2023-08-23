@@ -1,50 +1,64 @@
 "use client";
 import Link from "next/link";
 import { FadeIn } from "../FadeIn";
-import { urlForImage } from "../../sanity/lib/image";
+import { urlFor, urlForImage } from "../../sanity/lib/image";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import useGetAllBlogs from "../hooks/useGetAllBlogs";
 import { useState } from "react";
+import { client } from "../../sanity/lib/client";
+import axios from "axios";
+import Image from "next/image";
 
 export default function Recentblogs() {
-  // if (blogs?.isLoading) return "Loading...";
-  // if (blogs?.isError) return "Something went wrong";
+  const {
+    data: blogs,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () => {
+      try {
+        const res = await axios.get("/api/getAllPosts");
+        return res; // Assuming the response contains the data property
+      } catch (error) {
+        throw error;
+      }
+    },
+    keepPreviousData: true,
+  });
+  let allBlogs = blogs?.data;
 
-  const initialCount = 9; // Initial number of blogs to display
-  const [displayCount, setDisplayCount] = useState(initialCount); // State to track displayed blogs count
-
-  const blogs = useGetAllBlogs(displayCount); // Pass the displayCount to your useGetAllBlogs hook
-
-  const handleShowMore = () => {
-    setDisplayCount(displayCount + 9); // Increase displayCount by 9 on "Show More" click
-  };
-
+  if (isLoading || !blogs) return "";
+  if (isError) return "Something went wrong";
   return (
     <section className="bg-white text-gray-600 w-full">
       <p className="text-base normal-case text-left">Browse our newest posts</p>
       <h1 className=" text-3xl md:text-4xl font-bold mb-8">
         <span className="text-[#02ae70]">Recent</span> Blogs
       </h1>
-      <FadeIn>
-        <ul
-          id="blogCards"
-          className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 transition-all duration-500 "
-        >
-          {blogs?.map((blog, key) => (
+
+      <ul
+        id="blogCards"
+        className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 transition-all duration-500 "
+      >
+        {allBlogs?.map((blog, key) => {
+          const img = urlFor(blog?.mainImage)?.url();
+          return (
             <Link
               href={`/blogs/${blog?.slug?.current}`}
               key={key}
               className="flex flex-col gap-4 cursor-pointer hover:scale-[1.02]"
             >
-              <img
-                src={urlForImage(blog?.mainImage).url() || "/productimage.jpeg"}
+              <Image
+                width={400}
+                height={400}
+                src={img || "/productimage.jpeg"}
                 alt=""
                 className="w-full aspect-[10/7] rounded-t-lg object-cover object-center hover:opacity-70"
               />
+
               <div className="px-4 flex items-center gap-4">
                 <span className="bg-[#01ae6f] text-white px-4 py-2 rounded-full text-sm w-fit">
-                  {blog?.categories[0]?.title}
+                  {/* {blog?.categories[0]?.title} */}
                 </span>
                 <span>2 minute read</span>
               </div>
@@ -59,9 +73,10 @@ export default function Recentblogs() {
                 </p>
               </div>
             </Link>
-          ))}
-        </ul>
-        {blogs &&
+          );
+        })}
+      </ul>
+      {/* {blogs &&
           blogs.length > displayCount && ( // Show "Show More" button if there are more blogs to show
             <div className="flex justify-center mt-4">
               <button
@@ -71,8 +86,7 @@ export default function Recentblogs() {
                 Show More
               </button>
             </div>
-          )}
-      </FadeIn>
+          )} */}
     </section>
   );
 }
